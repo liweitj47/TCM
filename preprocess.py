@@ -2,21 +2,20 @@
 import re
 
 def process(constituent):
-    pat = re.compile(u'(（.+?）)|(\\(.+?\\))|(、)')
-    meds = re.sub(pat,'',constituent)
-    sep = re.compile(u'、')
-    meds = re.sub(sep,',',meds)
+    pat = re.compile(u'(（.+?）)|(\\(.+?\\))|(第[0-9一二三四五六七八九十]+日)')     # remove brackets, either in English or in Chinese
+    meds = re.sub(pat,' ',constituent)
+    sep = re.compile(u'、|，|,|:|：|；')
+    meds = re.sub(sep,' ',meds)
     meds = meds.split(u'。')
     '''
     if len(meds) > 2:
         print constituent.encode('utf8')
     '''
-    comma = re.compile(u'，|,')
-    meds = re.split(comma,meds[0])
+    meds = meds[0].split(' ')
     return [normalize(med)[0] for med in meds]
 
 def normalize(medicine):
-    num_pat = re.compile(u'[0-9\.半]+')
+    num_pat = re.compile(u'([0-9\.]+)|([一二三四五六七八九十百]+(两|钱|斤|升|斗|枚|个|分|只|枝|片|条))|(半(两|钱|斤|升|斗|枚|个|分|只|枝|片|条))')     # here remains a big problem for number
     med_dose = re.split(num_pat, medicine)
     if len(med_dose) > 2:
         print medicine.encode('utf8')
